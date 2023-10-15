@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assignment 3 Yunhe Li</title>
+    <script src="https://cdn.jsdelivr.net/npm/vega@5.25.0/build/vega.min.js" integrity="sha256-na2uPt+tUPV7GRVpc+/ezQj+lGwljIvOJifkmg8f3as=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-lite@5.15.0/build/vega-lite.min.js" integrity="sha256-WLAn82Ut4GptY/IJf4K/1i+R8ibAkVLFhBVkOovqCK8=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vega-embed@6.22.2/build/vega-embed.min.js" integrity="sha256-GfFZ6w7V/y3Ws9eHVsOXZ/F1ZFroThVZraOAx3HAt6s=" crossorigin="anonymous"></script>
+</head>
+<body>
+<h1>Assignment 3</h1>
+<p>Yunhe Li</p>
+<p>This is the visualization for the building inventory using vega lite.</p>
+<div id="viz"></div>
+<script>
+    var vlSpec = {
+        "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "data": {
+      "url": "https://uiuc-ischool-dataviz.github.io/spring2019online/week02/building_inventory.csv"
+    },
+    "hconcat": [
+      {
+        "mark": "point",
+        "encoding": {
+          "x": {"field": "Year Constructed", "type": "temporal"},
+          "y": {"field": "Year Acquired", "type": "temporal"},
+          "color": {"value": "grey", "condition": {"param": "paramone"}}
+        },
+        "params": [{"name": "paramone", "select": "interval"}]
+      },
+      {
+        "layer": [
+          {
+            "mark": "bar",
+            "encoding": {
+              "x": {"field": "Congress Dist"},
+              "y": {"aggregate": "sum", "field": "Square Footage"},
+              "color": {"value": "grey"}
+            }
+          },
+          {
+            "transform": [{"filter": {"param": "paramone"}}],
+            "mark": "bar",
+            "encoding": {
+              "x": {"field": "Congress Dist"},
+              "y": {"aggregate": "sum", "field": "Square Footage"}
+            }
+          }
+        ]
+      }
+    ]
+    };
+
+    vegaEmbed("#viz",vlSpec);
+</script>
+</body>
+</html>
