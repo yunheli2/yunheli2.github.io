@@ -1,0 +1,38 @@
+{
+    "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+    "data": {
+      "url": "https://uiuc-ischool-dataviz.github.io/spring2019online/week02/building_inventory.csv"
+    },
+    "hconcat": [
+      {
+        "mark": "point",
+        "encoding": {
+          "x": {"field": "Year Constructed", "type": "temporal"},
+          "y": {"field": "Year Acquired", "type": "temporal"},
+          "color": {"value": "grey", "condition": {"param": "paramone"}}
+        },
+        "params": [{"name": "paramone", "select": "interval"}]
+      },
+      {
+        "layer": [
+          {
+            "mark": "bar",
+            "encoding": {
+              "x": {"field": "Congress Dist"},
+              "y": {"aggregate": "sum", "field": "Square Footage"},
+              "color": {"value": "grey"}
+            }
+          },
+          {
+            "transform": [{"filter": {"param": "paramone"}}],
+            "mark": "bar",
+            "encoding": {
+              "x": {"field": "Congress Dist"},
+              "y": {"aggregate": "sum", "field": "Square Footage"}
+            }
+          }
+        ]
+      }
+    ],
+    "config": {}
+  }
