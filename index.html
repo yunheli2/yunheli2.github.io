@@ -16,40 +16,69 @@
 <script>
     var vlSpec = {
         "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
-    "data": {
-      "url": "https://uiuc-ischool-dataviz.github.io/spring2019online/week02/building_inventory.csv"
-    },
-    "hconcat": [
-      {
-        "mark": "point",
-        "encoding": {
-          "x": {"field": "Year Constructed", "type": "temporal"},
-          "y": {"field": "Year Acquired", "type": "temporal"},
-          "color": {"value": "grey", "condition": {"param": "paramone"}}
-        },
-        "params": [{"name": "paramone", "select": "interval"}]
-      },
-      {
-        "layer": [
-          {
-            "mark": "bar",
-            "encoding": {
-              "x": {"field": "Congress Dist"},
-              "y": {"aggregate": "sum", "field": "Square Footage"},
-              "color": {"value": "grey"}
-            }
+        "$schema": "https://vega.github.io/schema/vega-lite/v5.json",
+  "data": {
+    "url": "https://earthquake.usgs.gov/fdsnws/event/1/query?format=csv",
+    "format": {"type": "csv"}
+  },
+  "transform": [
+    {"calculate": "month(datum.time)+1", "as": "month"},
+    {"calculate": "year(datum.time)+'-'+datum.month+'-'+date(datum.time)", "as": "stdate"},
+    {"calculate": "datetime(datum.stdate)", "as": "date"}
+  ],
+  "vconcat": [
+    {
+      "width": 600,
+      "height": 500,
+      "layer": [
+        {
+          "data": {
+            "url": "https://vega.github.io/editor/data/world-110m.json",
+            "format": {"type": "topojson", "feature": "countries"}
           },
-          {
-            "transform": [{"filter": {"param": "paramone"}}],
-            "mark": "bar",
-            "encoding": {
-              "x": {"field": "Congress Dist"},
-              "y": {"aggregate": "sum", "field": "Square Footage"}
-            }
+          "projection": {"type": "naturalEarth1"},
+          "mark": {"type": "geoshape", "fill": "lightgray", "stroke": "gray"}
+        },
+        {
+          "params": [
+            {"name": "pts", "select": {"type": "point", "on": "pointerover"}}
+          ],
+          "transform": [
+
+            {"filter":{"param": "timeselector"}}
+          ],
+          "projection": {"type": "naturalEarth1"},
+          "mark": "circle",
+          "encoding": {
+            "longitude": {"field": "longitude", "type": "quantitative"},
+            "latitude": {"field": "latitude", "type": "quantitative"},
+            "color": {
+              "condition": {
+                "param": "pts",
+                "field": "mag",
+                "type": "quantitative"
+              },
+              "value": "gray"
+            },
+            "tooltip": [{"field": "time"}, {"field": "place"}, {"field": "mag"}]
           }
-        ]
+        }
+      ]
+    },
+    {
+      "width":400,
+      "params": [
+        {"name": "timeselector", "select":"interval"}
+      ],
+
+      "mark": "line",
+      "encoding": {
+        "x": {"field": "date", "type": "temporal"},
+        "y": {"aggregate":"max", "field":"mag"},
+        "color": {"condition": {"param": "timeselector"}, "value": "gray"}
       }
-    ]
+    }
+  ]
     };
 
     vegaEmbed("#viz",vlSpec);
